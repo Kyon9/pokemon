@@ -187,37 +187,36 @@ const App: React.FC = () => {
     'Rain': '下雨',
     'Sandstorm': '沙暴',
     'Snow': '下雪',
-    'None': '无天气'
+    'None': '无天气状态'
   };
 
   return (
     <div className="h-screen w-full bg-[#000] flex flex-col items-center justify-center p-2">
       {/* 战斗主屏幕 */}
-      <div className="relative w-full max-w-4xl aspect-[16/9] bg-[#a5d6a7] border-[8px] border-[#222] rounded-[40px] overflow-hidden shadow-[0_0_80px_rgba(0,0,0,1)]">
+      <div className="relative w-full max-w-4xl aspect-[16/9] bg-[#a5d6a7] border-[8px] border-[#222] rounded-[48px] overflow-hidden shadow-[0_0_120px_rgba(0,0,0,1)]">
         
-        {/* 背景 */}
+        {/* 背景图层 */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#80d8ff] via-[#90e0ff] to-[#a5d6a7]"></div>
         
-        {/* 平台渲染 */}
-        {/* 对手平台 - 极其右上 */}
-        <div className="absolute top-[28%] right-[5%] w-[35%] h-[12%] bg-black/10 rounded-[100%] blur-md z-0"></div>
-        {/* 玩家平台 - 极其左下 */}
-        <div className="absolute bottom-[2%] left-[2%] w-[55%] h-[22%] bg-black/10 rounded-[100%] blur-md z-0"></div>
+        {/* 对手平台 - 更加靠近右上 */}
+        <div className="absolute top-[22%] right-[-5%] w-[45%] h-[15%] bg-black/15 rounded-[100%] blur-xl z-0"></div>
+        {/* 玩家平台 - 更加靠近左下 */}
+        <div className="absolute bottom-[-5%] left-[-10%] w-[65%] h-[25%] bg-black/15 rounded-[100%] blur-xl z-0"></div>
 
-        {/* 天气遮罩 */}
+        {/* 天气视觉效果 */}
         {state.weather === 'Sun' && (
-          <div className="absolute inset-0 bg-orange-400/20 pointer-events-none animate-pulse z-30"></div>
+          <div className="absolute inset-0 bg-orange-400/25 pointer-events-none animate-pulse z-30"></div>
         )}
 
         {/* 【对手】 UI & 立绘 */}
-        {/* 对手UI：相对于旧版下移并右移 */}
-        <div className="absolute top-24 left-32 z-40 transform scale-90 origin-top-left">
+        {/* 对手 UI：向右下偏移，避开左上死角 */}
+        <div className="absolute top-28 left-40 z-40 transform scale-[0.85] origin-top-left">
           <HealthBar key={`hp-opp-${opponentActive.id}`} pokemon={opponentActive} isOpponent />
           <TeamStatus team={state.opponentTeam} isOpponent />
         </div>
         
-        {/* 对手立绘：极右上角 */}
-        <div className="absolute top-[2%] right-[4%] z-20">
+        {/* 对手立绘：极右上角，位置往上去 */}
+        <div className="absolute top-[-2%] right-[2%] z-20 scale-110">
           <PokemonSprite 
             key={`sprite-opp-${opponentActive.id}`} 
             src={opponentActive.sprite} 
@@ -228,8 +227,8 @@ const App: React.FC = () => {
         </div>
 
         {/* 【玩家】 立绘 & UI */}
-        {/* 玩家立绘：贴近左下边缘 */}
-        <div className="absolute bottom-[-5%] left-[5%] z-20 scale-110">
+        {/* 玩家立绘：左下角，避开底部 UI */}
+        <div className="absolute bottom-[-10%] left-[2%] z-20 scale-[1.25]">
           <PokemonSprite 
             key={`sprite-pla-${playerActive.id}`} 
             src={playerActive.backSprite} 
@@ -238,56 +237,51 @@ const App: React.FC = () => {
           />
         </div>
 
-        {/* 玩家UI：底部右侧 */}
-        <div className="absolute bottom-6 right-8 z-40 transform scale-95 origin-bottom-right">
+        {/* 玩家 UI：底部右侧，保持经典布局 */}
+        <div className="absolute bottom-10 right-10 z-40 transform scale-95 origin-bottom-right">
           <HealthBar key={`hp-pla-${playerActive.id}`} pokemon={playerActive} />
           <TeamStatus team={state.playerTeam} />
         </div>
 
-        {/* 底部天气状态栏 */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none w-full flex justify-center">
-          <div className={`pixel-corners px-5 py-2 bg-black/70 border-2 border-yellow-400/30 flex items-center gap-4 transition-all duration-500 ${state.weather === 'None' ? 'translate-y-20 opacity-0' : 'translate-y-0 opacity-100'}`}>
-            <div className="flex flex-col items-center">
-              <span className="text-[12px] text-yellow-400 font-bold tracking-widest">{weatherLabels[state.weather]}</span>
-              <span className="text-[10px] text-white/90 font-mono">REMAINING: {state.weatherTurns}</span>
-            </div>
-            <div className="h-6 w-[1px] bg-white/20"></div>
-            <div className="flex flex-col items-start">
-               <span className="text-[9px] text-blue-300 font-bold">回合倒计时</span>
-               <div className="w-20 h-1.5 bg-gray-800 rounded-full mt-1 overflow-hidden">
-                  <div className="h-full bg-blue-500 animate-[shimmer_2s_infinite]" style={{ width: `${(state.weatherTurns/8)*100}%` }}></div>
+        {/* 天气与倒计时面板 */}
+        <div className="absolute bottom-6 left-[35%] z-50 pointer-events-none">
+          <div className={`pixel-corners px-6 py-3 bg-black/80 border-2 border-yellow-500/40 flex flex-col items-center min-w-[180px] transition-all duration-700 ${state.weather === 'None' ? 'translate-y-32 opacity-0' : 'translate-y-0 opacity-100'}`}>
+            <span className="text-[14px] text-yellow-400 font-bold mb-1 tracking-widest">{weatherLabels[state.weather]}</span>
+            <div className="w-full flex items-center justify-between gap-3">
+               <span className="text-[10px] text-white/70 font-mono">REMAINING</span>
+               <div className="flex-1 h-2 bg-gray-900 rounded-full border border-white/10 overflow-hidden">
+                  <div className="h-full bg-yellow-400 shadow-[0_0_8px_#facc15]" style={{ width: `${(state.weatherTurns/8)*100}%`, transition: 'width 1s ease-out' }}></div>
                </div>
+               <span className="text-[12px] text-white font-bold font-mono">{state.weatherTurns}T</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 底部面板 */}
-      <div className="w-full max-w-4xl mt-3 grid grid-cols-12 gap-3 h-44">
-        {/* 日志 */}
-        <div className="col-span-7 bg-[#111] border-2 border-[#333] p-4 pixel-corners overflow-y-auto shadow-inner custom-scrollbar">
+      {/* 操作面板 */}
+      <div className="w-full max-w-4xl mt-4 grid grid-cols-12 gap-4 h-48">
+        <div className="col-span-7 bg-[#0a0a0a] border-2 border-[#333] p-5 pixel-corners overflow-y-auto shadow-inner custom-scrollbar">
           {state.isGameOver ? (
             <div className="h-full flex flex-col items-center justify-center">
-              <h2 className={`text-xl font-bold mb-3 ${state.winner === 'Player' ? 'text-yellow-400' : 'text-red-500'}`}>
+              <h2 className={`text-2xl font-bold mb-4 ${state.winner === 'Player' ? 'text-yellow-400' : 'text-red-500'}`}>
                 {state.winner === 'Player' ? '胜负已分：你赢了！' : '胜负已分：你输了...'}
               </h2>
-              <button onClick={restartGame} className="bg-yellow-500 hover:bg-yellow-400 text-black px-8 py-2 text-base font-bold pixel-corners transition-all active:translate-y-1">
-                重新开局
+              <button onClick={restartGame} className="bg-yellow-500 hover:bg-yellow-400 text-black px-10 py-3 text-lg font-bold pixel-corners transition-all active:translate-y-1 shadow-[4px_4px_0px_#8a6d3b]">
+                开启新一轮对战
               </button>
             </div>
           ) : (
             state.log.map((entry, i) => (
-              <p key={i} className={`text-sm mb-1 font-bold ${i === 0 ? 'text-yellow-400' : 'text-gray-500'}`}>
+              <p key={i} className={`text-base mb-1.5 font-bold ${i === 0 ? 'text-yellow-400' : 'text-gray-500'}`}>
                 {entry}
               </p>
             ))
           )}
         </div>
 
-        {/* 控制 */}
-        <div className="col-span-5 flex flex-col gap-2">
+        <div className="col-span-5 flex flex-col gap-3">
           {!showSwitchMenu && !state.isGameOver ? (
-            <div className="grid grid-cols-2 gap-2 h-full">
+            <div className="grid grid-cols-2 gap-3 h-full">
               {playerActive.moves.map((move, i) => {
                 const eff = getEffectivenessLabel(move, opponentActive);
                 return (
@@ -295,37 +289,37 @@ const App: React.FC = () => {
                     key={i}
                     disabled={isAnimating || playerActive.currentHp <= 0}
                     onClick={() => handleMove(i)}
-                    className={`pixel-corners p-1.5 flex flex-col items-center justify-center transition-all border-b-2 border-r-2
+                    className={`pixel-corners p-2 flex flex-col items-center justify-center transition-all border-b-4 border-r-4
                       ${isAnimating || playerActive.currentHp <= 0 ? 'bg-gray-900 border-gray-950 opacity-50' : 'bg-[#eee] hover:bg-white active:translate-y-1 active:border-b-0 border-gray-400'}`}
                   >
-                    <div className="flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: TYPE_COLORS[move.type] }}></span>
-                      <span className="text-gray-900 font-bold text-[11px]">{move.name}</span>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: TYPE_COLORS[move.type] }}></span>
+                      <span className="text-gray-900 font-bold text-[13px]">{move.name}</span>
                     </div>
-                    <span className={`text-[8px] font-bold ${eff.color}`}>{eff.text}</span>
+                    <span className={`text-[10px] font-bold ${eff.color}`}>{eff.text}</span>
                   </button>
                 );
               })}
-              <button disabled={isAnimating} onClick={() => setShowSwitchMenu(true)} className="col-span-2 pixel-corners font-bold text-[11px] py-2 bg-blue-700 hover:bg-blue-600 border-b-2 border-r-2 border-blue-900 text-white transition-all active:translate-y-1 active:border-b-0">
-                更换宝可梦
+              <button disabled={isAnimating} onClick={() => setShowSwitchMenu(true)} className="col-span-2 pixel-corners font-bold text-[13px] py-2 bg-blue-700 hover:bg-blue-600 border-b-4 border-r-4 border-blue-900 text-white transition-all active:translate-y-1 active:border-b-0">
+                派遣其他宝可梦
               </button>
             </div>
           ) : showSwitchMenu && !state.isGameOver ? (
-            <div className="grid grid-cols-3 gap-1 h-full">
+            <div className="grid grid-cols-3 gap-2 h-full">
               {state.playerTeam.map((p, i) => (
                 <button
                   key={p.id}
                   disabled={p.currentHp <= 0 || i === state.playerActiveIdx}
                   onClick={() => handleSwitch(i)}
-                  className={`pixel-corners p-0.5 flex flex-col items-center justify-center transition-all border-b-2 border-r-2
-                    ${i === state.playerActiveIdx ? 'bg-green-700 border-green-900' : 'bg-[#222] border-[#000] hover:bg-[#333]'}
+                  className={`pixel-corners p-1 flex flex-col items-center justify-center transition-all border-b-4 border-r-4
+                    ${i === state.playerActiveIdx ? 'bg-green-700 border-green-900' : 'bg-[#1a1a1a] border-[#000] hover:bg-[#2a2a2a]'}
                     ${p.currentHp <= 0 ? 'opacity-20 grayscale' : ''}`}
                 >
-                  <img src={p.icon} className="w-8 h-8 object-contain" style={{ imageRendering: 'pixelated' }} />
-                  <span className="text-[8px] text-white font-bold truncate w-full px-0.5">{p.name}</span>
+                  <img src={p.icon} className="w-10 h-10 object-contain" style={{ imageRendering: 'pixelated' }} />
+                  <span className="text-[9px] text-white font-bold truncate w-full px-1">{p.name}</span>
                 </button>
               ))}
-              <button disabled={playerActive.currentHp <= 0} onClick={() => setShowSwitchMenu(false)} className="col-span-3 pixel-corners text-[11px] font-bold text-white py-1.5 bg-gray-700 hover:bg-gray-600 border-b-2 border-r-2 border-gray-900">
+              <button disabled={playerActive.currentHp <= 0} onClick={() => setShowSwitchMenu(false)} className="col-span-3 pixel-corners text-[13px] font-bold text-white py-2 bg-gray-700 hover:bg-gray-600 border-b-4 border-r-4 border-gray-900">
                 取消
               </button>
             </div>
@@ -333,21 +327,9 @@ const App: React.FC = () => {
         </div>
       </div>
       <style>{`
-        @keyframes shimmer {
-          0% { opacity: 0.5; }
-          50% { opacity: 1; }
-          100% { opacity: 0.5; }
-        }
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #444;
-          border-radius: 2px;
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
       `}</style>
     </div>
   );

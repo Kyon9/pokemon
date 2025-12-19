@@ -8,7 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Zpix&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
-        /* 使用 Zpix 或类似的像素字体增强中文显示 */
         @font-face {
             font-family: 'Zpix';
             src: url('https://cdn.jsdelivr.net/gh/SolidZORO/zpix-pixel-font@master/dist/zpix.woff2') format('woff2');
@@ -16,7 +15,7 @@
 
         body {
             font-family: 'Zpix', 'Press Start 2P', cursive;
-            background-color: #1a1a1a;
+            background-color: #000;
             color: #ffffff;
             margin: 0;
             overflow: hidden;
@@ -30,11 +29,6 @@
             );
         }
 
-        .text-pixel {
-            font-family: 'Zpix', 'Press Start 2P', cursive;
-        }
-
-        /* 针对中文优化行高 */
         p, button, span {
             line-height: 1.5;
         }
@@ -51,5 +45,7 @@
 </head>
 <body>
     <div id="root"></div>
+    <!-- 必须显式引入入口文件 -->
+    <script type="module" src="./index.tsx"></script>
 </body>
 </html>

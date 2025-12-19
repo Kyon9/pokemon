@@ -21,11 +21,11 @@ const MOVES: Record<string, Move> = {
   MysticalFire: { name: '魔法火焰', type: 'Fire', category: 'Special', power: 75, accuracy: 100, description: '降低对手的特攻。' },
 };
 
-// 使用更加稳定的资源路径，对于 Gen 9，如果没有背面图则回退到正面图
+// 使用 PokeAPI 的官方高清像素图源，Gen 9 有更好的支持
 const getSprite = (id: number) => `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
 const getBackSprite = (id: number) => {
-  // Gen 9 (906+) 往往没有背面像素图，使用正面图代替（在组件中会处理镜像）
-  if (id >= 906) return getSprite(id);
+  // 第九世代目前 PokeAPI 仓库普遍缺失 Back Sprite，使用正面镜像作为备选，或者使用 Showdown 源
+  if (id >= 906) return `https://play.pokemonshowdown.com/sprites/ani-back/fluttermane.gif`; // 振翼发特殊处理
   return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/${id}.png`;
 };
 const getIcon = (id: number) => `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
@@ -46,19 +46,19 @@ export const PLAYER_TEAM: Pokemon[] = [
   {
     id: 'p3', name: '波荡水', types: ['Water', 'Dragon'], ability: 'Protosynthesis', item: '讲究眼镜',
     stats: { hp: 343, attack: 181, defense: 218, spAtk: 349, spDef: 202, speed: 317 },
-    currentHp: 343, sprite: getSprite(1009), backSprite: getBackSprite(1009), icon: getIcon(1009),
+    currentHp: 343, sprite: getSprite(1009), backSprite: `https://play.pokemonshowdown.com/sprites/ani-back/walkingwake.gif`, icon: getIcon(1009),
     moves: [MOVES.HydroSteam, MOVES.DracoMeteor, MOVES.WeatherBall, MOVES.FireBlast]
   },
   {
     id: 'p4', name: '雄伟牙', types: ['Ground', 'Fighting'], ability: 'Protosynthesis', item: '驱劲能量',
     stats: { hp: 371, attack: 361, defense: 298, spAtk: 127, spDef: 142, speed: 273 },
-    currentHp: 371, sprite: getSprite(984), backSprite: getBackSprite(984), icon: getIcon(984),
+    currentHp: 371, sprite: getSprite(984), backSprite: `https://play.pokemonshowdown.com/sprites/ani-back/greattusk.gif`, icon: getIcon(984),
     moves: [MOVES.HeadlongRush, MOVES.CloseCombat, MOVES.Earthquake, MOVES.IronHead]
   },
   {
     id: 'p5', name: '振翼发', types: ['Ghost', 'Fairy'], ability: 'Protosynthesis', item: '驱劲能量',
     stats: { hp: 251, attack: 131, defense: 146, spAtk: 369, spDef: 306, speed: 405 },
-    currentHp: 251, sprite: getSprite(987), backSprite: getBackSprite(987), icon: getIcon(987),
+    currentHp: 251, sprite: getSprite(987), backSprite: `https://play.pokemonshowdown.com/sprites/ani-back/fluttermane.gif`, icon: getIcon(987),
     moves: [MOVES.ShadowBall, MOVES.Moonblast, MOVES.WeatherBall, MOVES.MysticalFire]
   },
   {
