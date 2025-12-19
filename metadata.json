@@ -1,0 +1,5 @@
+{
+  "name": "Pokémon Sun Team Battle Sim",
+  "description": "A high-fidelity Pokémon battle simulator featuring a competitive Sun Team vs. a balanced AI opponent, built with React and Tailwind CSS.",
+  "requestFramePermissions": []
+}
