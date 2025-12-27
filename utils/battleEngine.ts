@@ -12,7 +12,7 @@ export const calculateDamage = (attacker: Pokemon, defender: Pokemon, move: Move
   let moveType = move.type;
   
   if (move.name === '气象球' && weather !== 'None') {
-    movePower = 100; // 天气下威力翻倍
+    movePower = 100; // 有天气时威力翻倍
     if (weather === 'Sun') moveType = 'Fire';
     else if (weather === 'Rain') moveType = 'Water';
     else if (weather === 'Sandstorm') moveType = 'Rock';
@@ -24,21 +24,21 @@ export const calculateDamage = (attacker: Pokemon, defender: Pokemon, move: Move
 
   let damage = (((2 * level / 5 + 2) * movePower * attack / defense) / 50 + 2);
 
-  // Weather modifiers
+  // 天气修正
   if (weather === 'Sun') {
     if (moveType === 'Fire') damage *= 1.5;
     if (moveType === 'Water' && move.name !== '水蒸气') damage *= 0.5;
     if (move.name === '水蒸气') damage *= 1.5;
   }
 
-  // STAB
+  // 属性一致加成 (STAB)
   if (attacker.types.includes(moveType)) damage *= 1.5;
 
-  // Type effectiveness
+  // 属性克制修正
   const effectiveness = getTypeEffectiveness(moveType, defender.types);
   damage *= effectiveness;
 
-  // Random factor
+  // 随机波动 (85% - 100%)
   const random = 0.85 + Math.random() * 0.15;
   damage *= random;
 
@@ -46,7 +46,6 @@ export const calculateDamage = (attacker: Pokemon, defender: Pokemon, move: Move
 };
 
 export const getAIAction = (opponent: Pokemon, player: Pokemon, weather: BattleState['weather']): number => {
-  // Simple heuristic: Choose move with highest damage
   let bestMoveIdx = 0;
   let maxDamage = -1;
 
@@ -65,6 +64,7 @@ export const checkSpeed = (p1: Pokemon, p2: Pokemon, weather: BattleState['weath
   let s1 = p1.stats.speed;
   let s2 = p2.stats.speed;
 
+  // 叶绿素特性：阳光下速度翻倍
   if (weather === 'Sun') {
     if (p1.ability === 'Chlorophyll') s1 *= 2;
     if (p2.ability === 'Chlorophyll') s2 *= 2;

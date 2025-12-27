@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>宝可梦晴天队对战模拟器</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Zpix&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zpix&display=swap" rel="stylesheet">
     <style>
         @font-face {
             font-family: 'Zpix';
@@ -14,7 +14,7 @@
         }
 
         body {
-            font-family: 'Zpix', 'Press Start 2P', cursive;
+            font-family: 'Zpix', sans-serif;
             background-color: #000;
             color: #ffffff;
             margin: 0;
@@ -32,20 +32,28 @@
         p, button, span {
             line-height: 1.5;
         }
+
+        #root {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 <script type="importmap">
 {
   "imports": {
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
   }
 }
 </script>
 </head>
 <body>
     <div id="root"></div>
-    <!-- 必须显式引入入口文件 -->
     <script type="module" src="./index.tsx"></script>
 </body>
 </html>

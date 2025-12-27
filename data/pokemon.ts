@@ -21,14 +21,22 @@ const MOVES: Record<string, Move> = {
   MysticalFire: { name: '魔法火焰', type: 'Fire', category: 'Special', power: 75, accuracy: 100, description: '降低对手的特攻。' },
 };
 
-// 使用 PokeAPI 的官方高清像素图源，Gen 9 有更好的支持
-const getSprite = (id: number) => `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
-const getBackSprite = (id: number) => {
-  // 第九世代目前 PokeAPI 仓库普遍缺失 Back Sprite，使用正面镜像作为备选，或者使用 Showdown 源
-  if (id >= 906) return `https://play.pokemonshowdown.com/sprites/ani-back/fluttermane.gif`; // 振翼发特殊处理
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/${id}.png`;
+/**
+ * 针对中国境内访问优化的图片源：
+ * 使用 jsDelivr 提供的官方 PokeAPI 镜像，这是目前国内访问 GitHub 资源最稳定的路径。
+ */
+const JSDELIVR_POKEAPI = "https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/";
+
+const getSprite = (id: number) => `${JSDELIVR_POKEAPI}${id}.png`;
+const getBackSprite = (id: number, showdownName?: string) => {
+  // 第九世代宝可梦 (ID > 905) 在官方像素库中往往缺失背面图
+  // 我们使用 Showdown 的资源作为补充，或者回退到正面图
+  if (id > 905 && showdownName) {
+    return `https://play.pokemonshowdown.com/sprites/ani-back/${showdownName}.gif`;
+  }
+  return `${JSDELIVR_POKEAPI}back/${id}.png`;
 };
-const getIcon = (id: number) => `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+const getIcon = (id: number) => `${JSDELIVR_POKEAPI}${id}.png`;
 
 export const PLAYER_TEAM: Pokemon[] = [
   {
@@ -46,19 +54,19 @@ export const PLAYER_TEAM: Pokemon[] = [
   {
     id: 'p3', name: '波荡水', types: ['Water', 'Dragon'], ability: 'Protosynthesis', item: '讲究眼镜',
     stats: { hp: 343, attack: 181, defense: 218, spAtk: 349, spDef: 202, speed: 317 },
-    currentHp: 343, sprite: getSprite(1009), backSprite: `https://play.pokemonshowdown.com/sprites/ani-back/walkingwake.gif`, icon: getIcon(1009),
+    currentHp: 343, sprite: getSprite(1009), backSprite: getBackSprite(1009, 'walkingwake'), icon: getIcon(1009),
     moves: [MOVES.HydroSteam, MOVES.DracoMeteor, MOVES.WeatherBall, MOVES.FireBlast]
   },
   {
     id: 'p4', name: '雄伟牙', types: ['Ground', 'Fighting'], ability: 'Protosynthesis', item: '驱劲能量',
     stats: { hp: 371, attack: 361, defense: 298, spAtk: 127, spDef: 142, speed: 273 },
-    currentHp: 371, sprite: getSprite(984), backSprite: `https://play.pokemonshowdown.com/sprites/ani-back/greattusk.gif`, icon: getIcon(984),
+    currentHp: 371, sprite: getSprite(984), backSprite: getBackSprite(984, 'greattusk'), icon: getIcon(984),
     moves: [MOVES.HeadlongRush, MOVES.CloseCombat, MOVES.Earthquake, MOVES.IronHead]
   },
   {
     id: 'p5', name: '振翼发', types: ['Ghost', 'Fairy'], ability: 'Protosynthesis', item: '驱劲能量',
     stats: { hp: 251, attack: 131, defense: 146, spAtk: 369, spDef: 306, speed: 405 },
-    currentHp: 251, sprite: getSprite(987), backSprite: `https://play.pokemonshowdown.com/sprites/ani-back/fluttermane.gif`, icon: getIcon(987),
+    currentHp: 251, sprite: getSprite(987), backSprite: getBackSprite(987, 'fluttermane'), icon: getIcon(987),
     moves: [MOVES.ShadowBall, MOVES.Moonblast, MOVES.WeatherBall, MOVES.MysticalFire]
   },
   {
@@ -79,19 +87,19 @@ export const OPPONENT_TEAM: Pokemon[] = [
   {
     id: 'o2', name: '赛富豪', types: ['Steel', 'Ghost'], ability: 'Good as Gold', item: '讲究眼镜',
     stats: { hp: 315, attack: 140, defense: 226, spAtk: 365, spDef: 218, speed: 267 },
-    currentHp: 315, sprite: getSprite(1000), backSprite: getBackSprite(1000), icon: getIcon(1000),
+    currentHp: 315, sprite: getSprite(1000), backSprite: getBackSprite(1000, 'gholdengo'), icon: getIcon(1000),
     moves: [MOVES.ShadowBall, MOVES.IronHead, MOVES.WeatherBall, MOVES.Moonblast]
   },
   {
     id: 'o3', name: '铁武者', types: ['Fairy', 'Fighting'], ability: 'Quark Drive', item: '驱劲能量',
     stats: { hp: 289, attack: 359, defense: 216, spAtk: 339, spDef: 156, speed: 331 },
-    currentHp: 289, sprite: getSprite(1006), backSprite: getBackSprite(1006), icon: getIcon(1006),
+    currentHp: 289, sprite: getSprite(1006), backSprite: getBackSprite(1006, 'ironvaliant'), icon: getIcon(1006),
     moves: [MOVES.Moonblast, MOVES.CloseCombat, MOVES.ShadowBall, MOVES.IronHead]
   },
   {
     id: 'o4', name: '仆刀将军', types: ['Dark', 'Steel'], ability: 'Supreme Overlord', item: '剩饭',
     stats: { hp: 341, attack: 371, defense: 276, spAtk: 140, spDef: 206, speed: 136 },
-    currentHp: 341, sprite: getSprite(983), backSprite: getBackSprite(983), icon: getIcon(983),
+    currentHp: 341, sprite: getSprite(983), backSprite: getBackSprite(983, 'kingambit'), icon: getIcon(983),
     moves: [MOVES.IronHead, MOVES.ShadowBall, MOVES.Earthquake, MOVES.CloseCombat]
   },
   {
@@ -103,7 +111,7 @@ export const OPPONENT_TEAM: Pokemon[] = [
   {
     id: 'o6', name: '巨锻匠', types: ['Fairy', 'Steel'], ability: 'Mold Breaker', item: '剩饭',
     stats: { hp: 311, attack: 186, defense: 206, spAtk: 176, spDef: 246, speed: 224 },
-    currentHp: 311, sprite: getSprite(959), backSprite: getBackSprite(959), icon: getIcon(959),
+    currentHp: 311, sprite: getSprite(959), backSprite: getBackSprite(959, 'tinkaton'), icon: getIcon(959),
     moves: [MOVES.IronHead, MOVES.Moonblast, MOVES.CloseCombat, MOVES.ShadowBall]
   }
 ];
